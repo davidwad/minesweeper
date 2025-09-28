@@ -24,9 +24,11 @@ def draw_square(screen: pygame.Surface, square: Square, distance: int):
         if square.mine:
             pygame.draw.rect(screen, "black", rect)
         else:
+            danger = square.danger[distance]
             pygame.draw.rect(screen, "white", rect)
-            img = font.render(str(square.danger[distance]), True, "black")
-            screen.blit(img, rect)
+            if danger > 0:
+                img = font.render(str(danger), True, "black")
+                screen.blit(img, rect)
     else:
         pygame.draw.rect(screen, "grey", rect)
         if square.flag:

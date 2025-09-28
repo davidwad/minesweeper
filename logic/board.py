@@ -4,16 +4,22 @@ from logic.square import Square
 from utils.grid import get_neighbours
 
 
+MAX_GENERATION_ATTEMPTS = 100
+
 class Board:
     def __init__(self, width: int, height: int, n_mines: int):
         self.height = height
         self.width = width
         self.n_mines = n_mines
-
+        self.mines_placed = False
         self._initialize_board()
-        self._place_mines()
+    
+    def reset_board(self, start_x: int, start_y: int):
+        self._initialize_board()
+        self._place_mines(start_x, start_y)
         self._calculate_danger(1)
         self._calculate_danger(2)
+        self.mines_placed = True
 
     def get_squares(self) -> list[Square]:
         return sum(self.board, [])
@@ -50,9 +56,20 @@ class Board:
                 col.append(Square(x, y))
             self.board.append(col)
 
-    def _place_mines(self):
-        for square in sample(self.get_squares(), self.n_mines):
+    def _place_mines(self, start_x: int, start_y: int):
+        for _ in range(MAX_GENERATION_ATTEMPTS):
+            mine_squares = sample(self.get_squares(), self.n_mines)
+            if self._initial_state_valid(mine_squares, start_x, start_y):
+                break
+        for square in sample(mine_squares, self.n_mines):
             square.mine = True
+
+    def _initial_state_valid(self, mine_squares: list[Square], start_x: int, start_y: int) -> bool:
+        for neighbour in get_neighbours(start_x, start_y, 1, self.width, self.height):
+            for mine_square in mine_squares:
+                if neighbour[0] == mine_square.x and neighbour[1] == mine_square.y:
+                    return False
+        return True
 
     def _calculate_danger(self, distance: int):
         for s in self.get_squares():

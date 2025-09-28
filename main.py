@@ -5,10 +5,10 @@ from logic.board import Board
 from drawing.draw import draw_board
 
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode(config.WINDOW_SIZE)
 running = True
 
-board = Board(30, 20, 100)
+board = Board(config.BOARD_SIZE[0], config.BOARD_SIZE[1], config.N_MINES)
 distance = 1
 
 while running:
@@ -21,7 +21,7 @@ while running:
             running = False
         case pygame.KEYUP:
             if event.key == pygame.K_r:
-                board = Board(30, 20, 100)
+                board = Board(config.BOARD_SIZE[0], config.BOARD_SIZE[1], config.N_MINES)
                 distance = 1
         case pygame.MOUSEWHEEL:
             if distance == 1:
@@ -32,9 +32,11 @@ while running:
             x, y = pygame.mouse.get_pos()
             x = int(x / config.SCALE)
             y = int(y / config.SCALE)
+            if not board.mines_placed:
+                board.reset_board(x, y)  
             if event.button == 1:
                 board.handle_reveal(x, y)
             elif event.button == 3:
-                board.place_flag(x, y)
+                board.place_flag(x, y)                    
 
 pygame.quit()

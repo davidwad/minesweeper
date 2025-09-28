@@ -1,3 +1,7 @@
 CAPTION = "Minesweeper"
 SCALE = 30
 GAP = 2
+
+WINDOW_SIZE = (800, 600)
+BOARD_SIZE = (20, 15)
+N_MINES = 60
